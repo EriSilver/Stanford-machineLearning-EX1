@@ -54,7 +54,7 @@ fprintf('Normalizing Features ...\n');
 % Add intercept term to X
 X = [ones(m, 1) X];
 
-
+plot(X, y, "xr");
 %% ================ Part 2: Gradient Descent ================
 
 % ====================== YOUR CODE HERE ======================
@@ -83,17 +83,42 @@ fprintf('Running gradient descent ...\n');
 
 % Choose some alpha value
 alpha = 0.01;
-num_iters = 400;
+num_iters = 50;
 
 % Init Theta and Run Gradient Descent 
-theta = zeros(3, 1);
-[theta, J_history] = gradientDescentMulti(X, y, theta, alpha, num_iters);
+theta = [];
+J_history = [];
 
 % Plot the convergence graph
 figure;
-plot(1:numel(J_history), J_history, '-b', 'LineWidth', 2);
 xlabel('Number of iterations');
 ylabel('Cost J');
+%_____________MINE_______________________
+colors = [ 'k'; 'r';'g' ;'b';'y' ;'m' ;'c' ;'w'];
+c = 1;
+lengthColors = length(colors);
+alpha = 1;
+while alpha >= 0.00001,
+    hold on;
+    tmpTheta = zeros(3, 1);
+    num_iters = 50;
+    [tmpTheta, tmpJ] = gradientDescentMulti(X, y, tmpTheta, alpha, num_iters);
+    plot(1:numel(tmpJ), tmpJ, colors(c) , 'LineWidth', 2);
+    
+    if min(tmpJ) <= min(J_history) || alpha == 1,
+        theta = tmpTheta;
+        J_history = tmpJ;
+    end;
+    
+    c = mod((c + 1), lengthColors);
+    if c == 0,
+        c = 1;
+    end;
+    
+    alpha = alpha / 3
+end;
+
+%_____________MINE_______________________
 
 % Display gradient descent's result
 fprintf('Theta computed from gradient descent: \n');
@@ -104,7 +129,9 @@ fprintf('\n');
 % ====================== YOUR CODE HERE ======================
 % Recall that the first column of X is all-ones. Thus, it does
 % not need to be normalized.
-price = 0; % You should change this
+%price = 0; % You should change this
+mu, sigma, theta
+price = theta(1) + theta(2) * (1650 - mu(1)) / sigma(1) + theta(3) * (3 - mu(2)) / sigma(2);
 
 
 % ============================================================
@@ -149,8 +176,8 @@ fprintf('\n');
 
 % Estimate the price of a 1650 sq-ft, 3 br house
 % ====================== YOUR CODE HERE ======================
-price = 0; % You should change this
-
+% price = 0; % You should change this
+price = theta(1) + theta(2) * 1650 + theta(3) * 3;
 
 % ============================================================
 
